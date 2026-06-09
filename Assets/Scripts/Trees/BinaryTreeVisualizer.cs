@@ -4,12 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Visualizador de árboles binarios para Unity.
-/// Construye un árbol desde una lista por niveles y permite ejecutar
-/// cada recorrido paso a paso, resaltando los nodos visitados.
-/// Ideal para usar en clase y explicar cómo funciona cada estrategia de recorrido.
-/// </summary>
 public class BinaryTreeVisualizer : MonoBehaviour
 {
     [Header("Prefabs")]

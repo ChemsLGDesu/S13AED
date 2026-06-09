@@ -2,20 +2,7 @@ using Sirenix.OdinInspector;
 using Sowtank.Collections.Trees;
 using UnityEngine;
 
-/// <summary>
-/// Ejemplo didáctico de un árbol de diálogos implementado con BinaryTree.
-/// 
-/// Cada nodo contiene un texto de diálogo. Las ramas izquierda y derecha
-/// representan dos opciones de respuesta que el jugador puede elegir.
-/// 
-/// Esto permite visualizar cómo un árbol binario puede modelar decisiones
-/// ramificadas en un videojuego (sistema de diálogos).
-/// 
-/// Uso en el Inspector:
-///   1. Presiona "Iniciar Diálogo"
-///   2. Usa "Opción Izquierda" o "Opción Derecha" para navegar
-///   3. "Reiniciar" vuelve a la raíz
-/// </summary>
+
 public class DialogueTreeExample : MonoBehaviour
 {
     [Header("Diálogo Actual")]
