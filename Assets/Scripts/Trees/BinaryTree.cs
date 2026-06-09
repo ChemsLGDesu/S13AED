@@ -11,6 +11,11 @@ namespace Sowtank.Collections.Trees
         public bool IsEmpty => root == null;
 
         //-> construir desde lista (insercion por niveles)
+
+        public void SetRoot(BinaryTreeNode<T> node)
+        {
+            root = node;
+        }
         public void BuildFromList(List<T> values)
         {
             if (values == null || values.Count == 0)

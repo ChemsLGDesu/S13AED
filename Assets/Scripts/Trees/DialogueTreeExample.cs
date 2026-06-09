@@ -131,6 +131,6 @@ public class DialogueTreeExample : MonoBehaviour
         n11.Left  = n22;
         n11.Right = n23;
 
-        tree.Root = n00;
+        tree.SetRoot( n00);
     }
 }
