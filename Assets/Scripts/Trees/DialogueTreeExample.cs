@@ -2,13 +2,12 @@ using Sirenix.OdinInspector;
 using Sowtank.Collections.Trees;
 using UnityEngine;
 
-
 public class DialogueTreeExample : MonoBehaviour
 {
-    [Header("Diálogo Actual")]
+    [Header("Dialogo Actual")]
     [ReadOnly]
     [ShowInInspector]
-    private string currentDialogue = "Presiona 'Iniciar Diálogo'";
+    private string currentDialogue = "Presiona 'Iniciar Dialogo'";
 
     [ReadOnly]
     [ShowInInspector]
@@ -22,51 +21,57 @@ public class DialogueTreeExample : MonoBehaviour
     [ShowInInspector]
     private bool isFinished;
 
-    [ReadOnly]
-    [ShowInInspector]
-    private int nodeCount;
-
     private BinaryTree<string> tree;
     private BinaryTreeNode<string> currentNode;
 
-    // ------------------------------------------------------------------------
-    // CONSTRUCCIÓN DEL ÁRBOL DE DIÁLOGOS
-    // ------------------------------------------------------------------------
-
-    /// <summary>Construye el árbol de diálogos de ejemplo.</summary>
-    [Button("Iniciar Diálogo")]
+    //-> construir arbol e iniciar dialogo
+    [Button("Iniciar Dialogo")]
     public void StartDialogue()
     {
         BuildSampleTree();
         currentNode = tree.Root;
         UpdateUI();
         isFinished = false;
-        Debug.Log("--- Diálogo iniciado ---");
+        Debug.Log("--- Dialogo iniciado ---");
     }
 
-    /// <summary>Toma la rama izquierda (Opción A).</summary>
-    [Button("Opción Izquierda")]
+    //-> elegir opcion izquierda (A)
+    [Button("Opcion Izquierda")]
     public void ChooseLeft()
     {
-        if (CanChoose())
+        if (tree == null || currentNode == null || isFinished)
         {
-            currentNode = currentNode.Left;
-            UpdateUI();
+            Debug.Log("Primero inicia el dialogo.");
+            return;
         }
+        if (currentNode.Left == null)
+        {
+            Debug.Log("No hay opcion izquierda.");
+            return;
+        }
+        currentNode = currentNode.Left;
+        UpdateUI();
     }
 
-    /// <summary>Toma la rama derecha (Opción B).</summary>
-    [Button("Opción Derecha")]
+    //-> elegir opcion derecha (B)
+    [Button("Opcion Derecha")]
     public void ChooseRight()
     {
-        if (CanChoose())
+        if (tree == null || currentNode == null || isFinished)
         {
-            currentNode = currentNode.Right;
-            UpdateUI();
+            Debug.Log("Primero inicia el dialogo.");
+            return;
         }
+        if (currentNode.Right == null)
+        {
+            Debug.Log("No hay opcion derecha.");
+            return;
+        }
+        currentNode = currentNode.Right;
+        UpdateUI();
     }
 
-    /// <summary>Reinicia el diálogo desde la raíz.</summary>
+    //-> reiniciar desde la raiz
     [Button("Reiniciar")]
     public void ResetDialogue()
     {
@@ -77,68 +82,46 @@ public class DialogueTreeExample : MonoBehaviour
         currentNode = tree.Root;
         UpdateUI();
         isFinished = false;
-        Debug.Log("--- Diálogo reiniciado ---");
+        Debug.Log("--- Dialogo reiniciado ---");
     }
 
-    // ------------------------------------------------------------------------
-    // INTERNA
-    // ------------------------------------------------------------------------
-
-    private bool CanChoose()
-    {
-        if (tree == null || currentNode == null)
-        {
-            Debug.LogWarning("Primero inicia el diálogo con 'Start Dialogue'.");
-            return false;
-        }
-        if (isFinished)
-        {
-            Debug.Log("El diálogo ha terminado. Presiona 'Reiniciar'.");
-            return false;
-        }
-        return true;
-    }
-
-    /// <summary>Actualiza los campos del Inspector según el nodo actual.</summary>
     private void UpdateUI()
     {
         if (currentNode == null)
         {
-            currentDialogue = "(fin del diálogo)";
+            currentDialogue = "(fin del dialogo)";
             leftOption = "-";
             rightOption = "-";
             isFinished = true;
-            Debug.Log("--- Fin del diálogo ---");
+            Debug.Log("--- Fin del dialogo ---");
             return;
         }
 
         currentDialogue = currentNode.Value;
         leftOption  = currentNode.Left  != null ? currentNode.Left.Value  : "(fin)";
         rightOption = currentNode.Right != null ? currentNode.Right.Value : "(fin)";
-        nodeCount   = tree.Size();
 
-        Debug.Log($"Diálogo: {currentDialogue}");
+        Debug.Log($"Dialogo: {currentDialogue}");
     }
 
-    /// <summary>Construye un árbol de diálogo de ejemplo con 7 nodos.</summary>
+    //-> arbol de dialogo de ejemplo (7 nodos)
+    //-> izquierda = opcion A, derecha = opcion B
     private void BuildSampleTree()
     {
         tree = new BinaryTree<string>();
 
-        //            [¡Hola aventurero!]
-        //           /                    \
-        //  [¿Cómo estás?]          [¿Quién eres?]
+        //            [Hola aventurero]
+        //           /                  \
+        //  [Como estas?]          [Quien eres?]
         //      /       \              /       \
-        // [¡Bien!]  [Necesito ayuda] [Mago]  [Adiós]
-        //
-        // Izquierda = opción A, Derecha = opción B
+        // [Bien!]  [Necesito ayuda] [Mago]  [Adios]
 
-        var n00 = new BinaryTreeNode<string>("¡Hola aventurero!");
-        var n10 = new BinaryTreeNode<string>("¿Cómo estás?");
-        var n11 = new BinaryTreeNode<string>("¿Quién eres?");
-        var n20 = new BinaryTreeNode<string>("¡Me alegra oírlo!");
-        var n21 = new BinaryTreeNode<string>("Claro, dime qué necesitas");
-        var n22 = new BinaryTreeNode<string>("Soy el mago Merlín");
+        var n00 = new BinaryTreeNode<string>("Hola aventurero!");
+        var n10 = new BinaryTreeNode<string>("Como estas?");
+        var n11 = new BinaryTreeNode<string>("Quien eres?");
+        var n20 = new BinaryTreeNode<string>("Me alegra oirlo!");
+        var n21 = new BinaryTreeNode<string>("Claro, dime que necesitas");
+        var n22 = new BinaryTreeNode<string>("Soy el mago Merlin");
         var n23 = new BinaryTreeNode<string>("Hasta pronto, viajero");
 
         n00.Left  = n10;
@@ -148,6 +131,6 @@ public class DialogueTreeExample : MonoBehaviour
         n11.Left  = n22;
         n11.Right = n23;
 
-        tree.SetRoot(n00);
+        tree.Root = n00;
     }
 }

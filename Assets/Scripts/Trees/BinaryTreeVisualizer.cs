@@ -6,24 +6,19 @@ using UnityEngine;
 
 public class BinaryTreeVisualizer : MonoBehaviour
 {
-    [Header("Prefabs")]
     public GraphVisualNode nodePrefab;
 
     [Header("Layout")]
     public float levelHeight = 2.5f;
     public float initialSpread = 6f;
 
-    [Header("Datos del Árbol")]
+    [Header("Datos")]
     public List<string> values = new() { "A", "B", "C", "D", "E", "F", "G" };
 
-    [Header("Animación")]
-    [Tooltip("Si está activo, resalta cada nodo paso a paso durante el recorrido.")]
+    [Header("Animacion")]
     public bool animate = true;
-
-    [Tooltip("Segundos de espera entre cada nodo durante la animación.")]
     public float stepDelay = 0.6f;
 
-    [Header("Resultado")]
     [ReadOnly]
     [ShowInInspector]
     private string traversalResult = "";
@@ -31,12 +26,8 @@ public class BinaryTreeVisualizer : MonoBehaviour
     private BinaryTree<string> tree;
     private Dictionary<BinaryTreeNode<string>, GraphVisualNode> nodeMap = new();
 
-    // ------------------------------------------------------------------------
-    // CONSTRUCCIÓN
-    // ------------------------------------------------------------------------
-
-    /// <summary>Construye el árbol a partir de la lista de valores (inserción por niveles).</summary>
-    [Button("Construir Árbol")]
+    //-> construir arbol desde la lista
+    [Button("Construir Arbol")]
     public void BuildTree()
     {
         StopAllCoroutines();
@@ -51,33 +42,18 @@ public class BinaryTreeVisualizer : MonoBehaviour
         traversalResult = "";
     }
 
-    // ------------------------------------------------------------------------
-    // RECORRIDOS
-    // ------------------------------------------------------------------------
+    //-> recorridos
+    [Button("InOrder (Izq → Raiz → Der)")]
+    public void StartInOrder()      => StartCoroutine(AnimateTraversal("InOrder", tree.InOrderNodes));
 
-    [Button("InOrder (Izq → Raíz → Der)")]
-    public void StartInOrder()
-    {
-        if (EnsureTree()) StartCoroutine(AnimateTraversal("InOrder", tree.InOrderNodes));
-    }
+    [Button("PreOrder (Raiz → Izq → Der)")]
+    public void StartPreOrder()     => StartCoroutine(AnimateTraversal("PreOrder", tree.PreOrderNodes));
 
-    [Button("PreOrder (Raíz → Izq → Der)")]
-    public void StartPreOrder()
-    {
-        if (EnsureTree()) StartCoroutine(AnimateTraversal("PreOrder", tree.PreOrderNodes));
-    }
+    [Button("PostOrder (Izq → Der → Raiz)")]
+    public void StartPostOrder()    => StartCoroutine(AnimateTraversal("PostOrder", tree.PostOrderNodes));
 
-    [Button("PostOrder (Izq → Der → Raíz)")]
-    public void StartPostOrder()
-    {
-        if (EnsureTree()) StartCoroutine(AnimateTraversal("PostOrder", tree.PostOrderNodes));
-    }
-
-    [Button("LevelOrder (BFS por niveles)")]
-    public void StartLevelOrder()
-    {
-        if (EnsureTree()) StartCoroutine(AnimateTraversal("LevelOrder", tree.LevelOrderNodes));
-    }
+    [Button("LevelOrder (BFS)")]
+    public void StartLevelOrder()   => StartCoroutine(AnimateTraversal("LevelOrder", tree.LevelOrderNodes));
 
     [Button("Limpiar")]
     public void Clear()
@@ -88,20 +64,19 @@ public class BinaryTreeVisualizer : MonoBehaviour
         traversalResult = "";
     }
 
-    // ------------------------------------------------------------------------
-    // ANIMACIÓN
-    // ------------------------------------------------------------------------
-
-    /// <summary>
-    /// Ejecuta el recorrido indicado, acumula los nodos visitados y luego
-    /// los resalta uno por uno si la animación está activa.
-    /// </summary>
+    //-> anima el recorrido paso a paso
     private IEnumerator AnimateTraversal(string label, System.Action<System.Action<BinaryTreeNode<string>>> traversal)
     {
+        if (tree == null || tree.IsEmpty)
+        {
+            Debug.LogWarning("Construye el arbol primero.");
+            yield break;
+        }
+
         RestoreColors();
         traversalResult = "";
 
-        // 1. Ejecutar el recorrido para determinar el orden de visita
+        //-> ejecutar recorrido para determinar orden
         var visited = new List<BinaryTreeNode<string>>();
         traversal(node =>
         {
@@ -111,10 +86,9 @@ public class BinaryTreeVisualizer : MonoBehaviour
 
         Debug.Log($"{label}: {traversalResult.Trim()}");
 
-        // 2. Si no hay animación, terminamos
         if (!animate) yield break;
 
-        // 3. Animar: resaltar cada nodo en el orden visitado
+        //-> resaltar cada nodo en orden
         foreach (var node in visited)
         {
             if (nodeMap.TryGetValue(node, out var visual))
@@ -122,16 +96,11 @@ public class BinaryTreeVisualizer : MonoBehaviour
             yield return new WaitForSeconds(stepDelay);
         }
 
-        // 4. Restaurar colores tras un momento
         yield return new WaitForSeconds(0.5f);
         RestoreColors();
     }
 
-    // ------------------------------------------------------------------------
-    // LAYOUT DEL ÁRBOL
-    // ------------------------------------------------------------------------
-
-    /// <summary>Ubica los nodos visuales recursivamente (layout de árbol binario clásico).</summary>
+    //-> posicionar nodos visuales recursivamente
     private void PlaceNodes(BinaryTreeNode<string> node, Vector3 pos, float spread)
     {
         if (node == null) return;
@@ -147,7 +116,7 @@ public class BinaryTreeVisualizer : MonoBehaviour
         PlaceNodes(node.Right, new Vector3(pos.x + spread, nextY, 0), nextSpread);
     }
 
-    /// <summary>Dibuja las conexiones (aristas) entre padres e hijos.</summary>
+    //-> dibujar conexiones padre-hijo
     private void DrawAllConnections(BinaryTreeNode<string> node)
     {
         if (node == null || !nodeMap.ContainsKey(node)) return;
@@ -176,20 +145,9 @@ public class BinaryTreeVisualizer : MonoBehaviour
         }
         nodeMap.Clear();
     }
-
     private void RestoreColors()
     {
         foreach (var v in nodeMap.Values)
             if (v != null) v.NodeName.color = Color.white;
-    }
-
-    private bool EnsureTree()
-    {
-        if (tree == null || tree.IsEmpty)
-        {
-            Debug.LogWarning("Primero construye el árbol con 'Build Tree'.");
-            return false;
-        }
-        return true;
     }
 }
