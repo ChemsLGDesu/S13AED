@@ -123,6 +123,9 @@ public class DialogueTreeExample : MonoBehaviour
         var n21 = new BinaryTreeNode<string>("Claro, dime que necesitas");
         var n22 = new BinaryTreeNode<string>("Soy el mago Merlin");
         var n23 = new BinaryTreeNode<string>("Hasta pronto, viajero");
+        var n24 = new BinaryTreeNode<string>("Necesito una Arma Magica");
+        var n25 = new BinaryTreeNode<string>("Que haces aqui, EN ESTE LUGAR");
+        var n26 = new BinaryTreeNode<string>("");
 
         n00.Left  = n10;
         n00.Right = n11;
@@ -130,7 +133,8 @@ public class DialogueTreeExample : MonoBehaviour
         n10.Right = n21;
         n11.Left  = n22;
         n11.Right = n23;
-
+        n24.Left = n24;
+        n24.Right = n24;
         tree.SetRoot( n00);
     }
 }

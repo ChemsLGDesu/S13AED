@@ -13,7 +13,7 @@ public class BinaryTreeVisualizer : MonoBehaviour
     public float initialSpread = 6f;
 
     [Header("Datos")]
-    public List<string> values = new() { "A", "B", "C", "D", "E", "F", "G" };
+    public List<string> values = new() { "A", "B", "C", "D", "E", "F", "G","H","I","J","K","L", "M","N","O" };
 
     [Header("Animacion")]
     public bool animate = true;
