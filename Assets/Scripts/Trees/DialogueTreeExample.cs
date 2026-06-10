@@ -1,28 +1,39 @@
 using Sirenix.OdinInspector;
 using Sowtank.Collections.Trees;
 using UnityEngine;
-
+public struct Dialog
+{
+    public string Dialogo;
+    public string Opcion1;
+    public string Opcion2;
+    public Dialog(string value , string op1, string op2)
+    {
+        Dialogo = value;
+        Opcion1 = op1;
+        Opcion2 = op2;
+    }
+}
 public class DialogueTreeExample : MonoBehaviour
 {
     [Header("Dialogo Actual")]
     [ReadOnly]
-    [ShowInInspector]
+    [FoldoutGroup("Respuesta") , ShowInInspector]
     private string currentDialogue = "Presiona 'Iniciar Dialogo'";
 
-    [ReadOnly]
-    [ShowInInspector]
-    private string leftOption = "-";
 
     [ReadOnly]
-    [ShowInInspector]
+    [FoldoutGroup("Right"), ShowInInspector]
     private string rightOption = "-";
+    [ReadOnly]
+    [FoldoutGroup("Left"), ShowInInspector]
+    private string leftOption = "-";
 
     [ReadOnly]
     [ShowInInspector]
     private bool isFinished;
 
-    private BinaryTree<string> tree;
-    private BinaryTreeNode<string> currentNode;
+    private BinaryTree<Dialog> tree;
+    private BinaryTreeNode<Dialog> currentNode;
 
     //-> construir arbol e iniciar dialogo
     [Button("Iniciar Dialogo")]
@@ -36,7 +47,9 @@ public class DialogueTreeExample : MonoBehaviour
     }
 
     //-> elegir opcion izquierda (A)
-    [Button("Opcion Izquierda")]
+
+
+    [FoldoutGroup("Left"),Button("Opcion Izquierda")]
     public void ChooseLeft()
     {
         if (tree == null || currentNode == null || isFinished)
@@ -53,8 +66,9 @@ public class DialogueTreeExample : MonoBehaviour
         UpdateUI();
     }
 
+ 
     //-> elegir opcion derecha (B)
-    [Button("Opcion Derecha")]
+    [FoldoutGroup("Right") ,Button("Opcion Derecha")]
     public void ChooseRight()
     {
         if (tree == null || currentNode == null || isFinished)
@@ -70,6 +84,7 @@ public class DialogueTreeExample : MonoBehaviour
         currentNode = currentNode.Right;
         UpdateUI();
     }
+
 
     //-> reiniciar desde la raiz
     [Button("Reiniciar")]
@@ -97,9 +112,9 @@ public class DialogueTreeExample : MonoBehaviour
             return;
         }
 
-        currentDialogue = currentNode.Value;
-        leftOption  = currentNode.Left  != null ? currentNode.Left.Value  : "(fin)";
-        rightOption = currentNode.Right != null ? currentNode.Right.Value : "(fin)";
+        currentDialogue = currentNode.Value.Dialogo;
+        leftOption  =  currentNode.Value.Opcion1  ;
+        rightOption = currentNode.Value.Opcion2;
 
         Debug.Log($"Dialogo: {currentDialogue}");
     }
@@ -108,15 +123,30 @@ public class DialogueTreeExample : MonoBehaviour
     //-> izquierda = opcion A, derecha = opcion B
     private void BuildSampleTree()
     {
-        tree = new BinaryTree<string>();
+        tree = new BinaryTree<Dialog>();
 
         //            [Hola aventurero]
         //           /                  \
         //  [Como estas?]          [Quien eres?]
         //      /       \              /       \
         // [Bien!]  [Necesito ayuda] [Mago]  [Adios]
+        var t00 = new BinaryTreeNode<Dialog>(new("Hola aventurero!", "Como estas?" , "Quien eres?"));
 
-        var n00 = new BinaryTreeNode<string>("Hola aventurero!");
+        var t10 = new BinaryTreeNode<Dialog>(new("Bien gracias por preguntar :D ", " Tienes una cara muy rara >:l ", "Eres una persona muy elegante"));
+
+        var t21 = new BinaryTreeNode<Dialog>(new("Insolente Preparate Para Morir", " [PELEAR] ", "[ESCAPAR]"));
+        var t22 = new BinaryTreeNode<Dialog>(new("Muchas gracias , quieres venir a mi casa?", " [SEGUIRLO] ", "[RECHAZAR LA INVITACIÓN]"));
+
+
+
+        var t11 = new BinaryTreeNode<Dialog>(new("Soy el gran herrero TripleT", "Triple T?", "Que me contas!"));
+
+        var t23 = new BinaryTreeNode<Dialog>(new("TUNG TUNG TUNG SAHUR", " [DARLE TODO TU DINERO] ", "[REZARLE]"));
+        var t24 = new BinaryTreeNode<Dialog>(new("Insolente preparate para morir ", " [PELEAR] ", "[ESCAPAR]"));
+
+
+
+        /*var n00 = new BinaryTreeNode<string>("Hola aventurero!");
         var n10 = new BinaryTreeNode<string>("Como estas?");
         var n11 = new BinaryTreeNode<string>("Quien eres?");
         var n20 = new BinaryTreeNode<string>("Me alegra oirlo!");
@@ -129,8 +159,16 @@ public class DialogueTreeExample : MonoBehaviour
         n10.Left  = n20;
         n10.Right = n21;
         n11.Left  = n22;
-        n11.Right = n23;
+        n11.Right = n23;*/
+        t00.Left = t10;
+        t00.Right = t11;
 
-        tree.SetRoot( n00);
+        t10.Left = t21;
+        t10.Right = t22;
+
+        t11.Left = t23;
+        t11.Right = t24;
+
+        tree.SetRoot(t00);
     }
 }

@@ -12,5 +12,6 @@ namespace Sowtank.Collections.Trees
         }
 
         public bool IsLeaf => Left == null && Right == null;//->no tiene hijos
+
     }
 }
